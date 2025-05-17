@@ -2,3 +2,5 @@ LibriSpeech/
 *.ipynb
 Project Discussion.html
 *parquet
+.venv/
+data/

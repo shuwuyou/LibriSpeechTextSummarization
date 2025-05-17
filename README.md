@@ -29,13 +29,14 @@ project_root/
 │  ├─ raw_audio/                # your unprocessed clips
 │  ├─ clean_audio/              # output from audio_cleaning.py
 │  ├─ transcripts/              # Whisper + cleaned CSV/parquet
-│  └─ nlp/                      # NER & summaries (optional)
+│  └─ ner_results/              # NER results
 ├─ src/
 │  ├─ audio_cleaning.py         # stage 1
-│  ├─ whisper_transcribe.py     # stage 2 (batch)
+│  ├─ transcribe_speech.py      # stage 2 (batch)
 │  ├─ text_cleaning.py          # stage 3
-│  ├─ ner_summarise.py          # stage 4 (spaCy + T5) ★ NEW
+│  ├─ ner_model.py              # stage 4 (spaCy + T5) ★ NEW
 │  └─ app.py                    # Flask UI
+├─ requirements.txt             # Dependencies
 └─ README.md
 ```
 
@@ -109,7 +110,7 @@ python src/whisper_transcribe.py
 python src/text_cleaning.py
 
 # 4. NER & summarisation (optional)
-python src/ner_summarise.py
+python src/ner_model.py
 
 # 5. Launch web UI
 python src/app.py  # http://localhost:5000

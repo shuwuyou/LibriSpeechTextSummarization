@@ -20,4 +20,5 @@ text_cleaning:
   remove_non_alpha: false
   remove_fillers: true
 
- 
+ner:
+  output_entity_csv: "data/ner_results/libri_entities_spacy.csv"

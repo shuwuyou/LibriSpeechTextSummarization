@@ -22,3 +22,6 @@ text_cleaning:
 
 ner:
   output_entity_csv: "data/ner_results/libri_entities_spacy.csv"
+
+summarization:
+  final_output: "data/sum_results/final.csv"

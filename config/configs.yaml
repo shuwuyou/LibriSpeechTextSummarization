@@ -1,0 +1,7 @@
+
+DATA:
+ PATH: LibriSpeech/dev-clean
+ BOOKS: LibriSpeech/BOOKS.TXT
+ CHAPTERS: LibriSpeech/CHAPTERS.TXT
+ SPEAKER: LibriSpeech/SPEAKER.TXT
+ 

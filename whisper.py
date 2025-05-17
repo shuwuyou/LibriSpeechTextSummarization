@@ -9,7 +9,7 @@
 #   input_file: data/transcripts/test.parquet
 # ---------------------------------------------------------------
 import yaml, pathlib, re, random
-import whisper, torch, soundfile as sf, pandas as pd
+import LibriSpeechTextSummarization.whisper as whisper, torch, soundfile as sf, pandas as pd
 from tqdm.auto import tqdm
 
 # ------------------ 1. load config ------------------------------------------

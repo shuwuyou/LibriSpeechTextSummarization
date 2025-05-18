@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Upload Audio File</h2>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+                    <div class="file-upload-wrapper">
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Select an audio file to process</label>
+                            <input class="form-control" type="file" id="file" name="file" accept=".wav,.mp3,.flac,.ogg,.m4a">
+                            <div class="form-text">Supported formats: WAV, MP3, FLAC, OGG, M4A</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload & Process</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <h3>Processing Pipeline</h3>
+                <ol>
+                    <li>Audio Cleaning - Removes silence and normalizes volume</li>
+                    <li>Speech Transcription - Converts speech to text</li>
+                    <li>Text Cleaning - Removes filler words and normalizes text</li>
+                    <li>Named Entity Recognition - Identifies people, organizations, locations, etc.</li>
+                    <li>Text Summarization - Creates summaries of different lengths</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

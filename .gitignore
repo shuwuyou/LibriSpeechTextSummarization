@@ -2,6 +2,7 @@ LibriSpeech/
 *.ipynb
 Project Discussion.html
 *parquet
+*__pycache__
 .venv/
 data/
 output/

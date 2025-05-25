@@ -4,4 +4,24 @@ DATA:
  BOOKS: LibriSpeech/BOOKS.TXT
  CHAPTERS: LibriSpeech/CHAPTERS.TXT
  SPEAKER: LibriSpeech/SPEAKERS.TXT
- 
+
+audio_cleaning:
+  input_path: "data/raw_audio"
+  output_dir: "data/clean_audio"
+  sr: 16000
+  silence_db: 25
+  target_dbfs: -3.0
+
+text_cleaning:
+  input_file: "data/transcripts/test.parquet"
+  output_csv: "data/transcripts/cleaned_transcripts.csv"
+  text_col: "text"
+  lowercase: true
+  remove_non_alpha: false
+  remove_fillers: true
+
+ner:
+  output_entity_csv: "data/ner_results/libri_entities_spacy.csv"
+
+summarization:
+  final_output: "data/sum_results/final.csv"

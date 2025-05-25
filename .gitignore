@@ -3,3 +3,7 @@ LibriSpeech/
 Project Discussion.html
 *parquet
 *__pycache__
+.venv/
+data/
+output/
+__pycache__

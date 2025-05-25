@@ -5,40 +5,440 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audio Processing Pipeline</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --dark-bg: #1a1d29;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow-primary: 0 20px 40px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            padding-top: 2rem;
-            padding-bottom: 2rem;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+            position: relative;
+            overflow-x: hidden;
         }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
         .header {
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e5e5e5;
-            margin-bottom: 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
         }
+
+        .header h1 {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: var(--secondary-gradient);
+            margin: 1.5rem auto;
+            border-radius: 2px;
+            box-shadow: 0 2px 10px rgba(240, 147, 251, 0.4);
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            box-shadow: var(--shadow-primary);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            z-index: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            position: relative;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-gradient);
+        }
+
+        .card-title {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1.75rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-title::before {
+            content: '🎵';
+            font-size: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .card-body {
+            padding: 2.5rem;
+        }
+
+        .card-footer {
+            background: linear-gradient(135deg, rgba(240, 147, 251, 0.05) 0%, rgba(245, 87, 108, 0.05) 100%);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 2.5rem;
+        }
+
+        .file-upload-wrapper {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+            border: 2px dashed rgba(102, 126, 234, 0.3);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .file-upload-wrapper.drag-active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+            transform: translateY(-2px);
+        }
+
+        .file-upload-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(102, 126, 234, 0.02),
+                transparent
+            );
+            transform: rotate(45deg);
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-wrapper:hover {
+            border-color: rgba(102, 126, 234, 0.6);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%);
+            transform: translateY(-2px);
+        }
+
+        .file-upload-wrapper:hover::before {
+            animation: shimmer 1.5s ease-in-out;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .form-control {
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            padding: 0.875rem 1.25rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .btn {
+            padding: 0.875rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+            background: linear-gradient(135deg, #7c8aed 0%, #8b5fbf 100%);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
         .entity-tag {
             display: inline-block;
-            padding: 0.25rem 0.5rem;
+            padding: 0.5rem 1rem;
             margin: 0.25rem;
-            border-radius: 0.25rem;
-            background-color: #e9ecef;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
-        .PERSON { background-color: #d4edda; }
-        .ORG { background-color: #cce5ff; }
-        .GPE, .LOC { background-color: #fff3cd; }
-        .DATE, .TIME { background-color: #f8d7da; }
-        .summary-section {
-            margin-bottom: 2rem;
-            padding: 1rem;
-            border-radius: 0.25rem;
-            background-color: #f8f9fa;
+
+        .entity-tag::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
         }
-        .file-upload-wrapper {
-            margin: 2rem 0;
-            padding: 2rem;
-            border: 2px dashed #dee2e6;
-            border-radius: 0.5rem;
-            text-align: center;
+
+        .PERSON { 
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            box-shadow: 0 4px 15px rgba(21, 87, 36, 0.2);
         }
+        
+        .ORG { 
+            background: linear-gradient(135deg, #cce5ff 0%, #b3d9ff 100%);
+            color: #004085;
+            box-shadow: 0 4px 15px rgba(0, 64, 133, 0.2);
+        }
+        
+        .GPE, .LOC { 
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            color: #856404;
+            box-shadow: 0 4px 15px rgba(133, 100, 4, 0.2);
+        }
+        
+        .DATE, .TIME { 
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            box-shadow: 0 4px 15px rgba(114, 28, 36, 0.2);
+        }
+
+        .entity-tag:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .alert {
+            border: none;
+            border-radius: 16px;
+            padding: 1.25rem 1.5rem;
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-left: 4px solid #f39c12;
+            box-shadow: 0 8px 25px rgba(243, 156, 18, 0.2);
+        }
+
+        .accordion-item {
+            border: none;
+            margin-bottom: 1rem;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .accordion-header {
+            border-radius: 16px;
+        }
+
+        .accordion-button {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border: none;
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .accordion-button:focus {
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+        }
+
+        .accordion-body {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .bg-light {
+            background: linear-gradient(135deg, rgba(248, 249, 250, 0.8) 0%, rgba(233, 236, 239, 0.8) 100%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .processing-step {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .processing-step:last-child {
+            border-bottom: none;
+        }
+
+        .processing-step:hover {
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            padding-left: 1.5rem;
+        }
+
+        .processing-step::before {
+            content: '✨';
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .card-body,
+            .card-header,
+            .card-footer {
+                padding: 1.5rem;
+            }
+            
+            .file-upload-wrapper {
+                padding: 2rem 1rem;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Smooth reveal animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: reveal 0.8s ease forwards;
+        }
+
+        @keyframes reveal {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
     </style>
 </head>
 <body>
@@ -49,10 +449,10 @@
         
         {% with messages = get_flashed_messages() %}
         {% if messages %}
-        <div class="alert alert-warning">
+        <div class="alert alert-warning reveal">
             <ul class="mb-0">
                 {% for message in messages %}
-                <li>{{ message }}</li>
+                <li><i class="fas fa-exclamation-triangle me-2"></i>{{ message }}</li>
                 {% endfor %}
             </ul>
         </div>
@@ -63,5 +463,114 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add reveal animation to cards when they come into view
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.classList.add('reveal');
+            });
+
+            // Enhanced file upload with better event handling
+            const fileInput = document.querySelector('input[type="file"]');
+            const uploadWrapper = document.querySelector('.file-upload-wrapper');
+            
+            if (fileInput && uploadWrapper) {
+                // Ensure file input is clickable
+                fileInput.style.pointerEvents = 'auto';
+                fileInput.style.position = 'relative';
+                fileInput.style.zIndex = '10';
+                
+                // Drag and drop functionality
+                let dragCounter = 0;
+
+                function preventDefaults(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+
+                function highlight() {
+                    uploadWrapper.classList.add('drag-active');
+                    uploadWrapper.style.borderColor = '#667eea';
+                    uploadWrapper.style.background = 'linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%)';
+                }
+
+                function unhighlight() {
+                    uploadWrapper.classList.remove('drag-active');
+                    uploadWrapper.style.borderColor = 'rgba(102, 126, 234, 0.3)';
+                    uploadWrapper.style.background = 'linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)';
+                }
+
+                function handleDrop(e) {
+                    preventDefaults(e);
+                    dragCounter = 0;
+                    unhighlight();
+                    
+                    const dt = e.dataTransfer;
+                    const files = dt.files;
+                    
+                    if (files.length > 0) {
+                        const file = files[0];
+                        const allowedTypes = ['.wav', '.mp3', '.flac', '.ogg', '.m4a'];
+                        const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+                        
+                        if (allowedTypes.includes(fileExtension)) {
+                            fileInput.files = files;
+                            updateFileLabel(file.name);
+                            // Trigger change event
+                            const event = new Event('change', { bubbles: true });
+                            fileInput.dispatchEvent(event);
+                        } else {
+                            alert('Please select a valid audio file (WAV, MP3, FLAC, OGG, M4A)');
+                        }
+                    }
+                }
+
+                function updateFileLabel(fileName) {
+                    const label = uploadWrapper.querySelector('.form-label');
+                    if (label) {
+                        label.innerHTML = `<i class="fas fa-file-audio text-success me-2"></i><strong>Selected: ${fileName}</strong>`;
+                    }
+                }
+
+                // Drag events
+                uploadWrapper.addEventListener('dragenter', function(e) {
+                    preventDefaults(e);
+                    dragCounter++;
+                    highlight();
+                });
+
+                uploadWrapper.addEventListener('dragover', function(e) {
+                    preventDefaults(e);
+                });
+
+                uploadWrapper.addEventListener('dragleave', function(e) {
+                    preventDefaults(e);
+                    dragCounter--;
+                    if (dragCounter === 0) {
+                        unhighlight();
+                    }
+                });
+
+                uploadWrapper.addEventListener('drop', handleDrop);
+
+                // File input change event
+                fileInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        updateFileLabel(file.name);
+                    }
+                });
+
+                // Click on wrapper should trigger file input
+                uploadWrapper.addEventListener('click', function(e) {
+                    // Only trigger if not clicking on the actual input or button
+                    if (e.target !== fileInput && !e.target.closest('button') && !e.target.closest('input')) {
+                        fileInput.click();
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -2,81 +2,206 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-12">
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h2 class="mb-0">Processing Results</h2>
-                <a href="{{ url_for('index') }}" class="btn btn-primary">Process Another File</a>
+    <!-- Header Card -->
+    <div class="col-12 mb-4">
+        <div class="card reveal">
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <h2 class="mb-2">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        Processing Complete
+                    </h2>
+                    <p class="mb-0 text-muted">Your audio has been successfully processed and analyzed</p>
+                </div>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>
+                    Process Another File
+                </a>
             </div>
             <div class="card-body">
-                <div class="mb-3">
-                    <h3>File Information</h3>
-                    <p><strong>Filename:</strong> {{ results.filename }}</p>
-                    <p><strong>Duration:</strong> {{ results.duration }}</p>
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-file-audio text-primary me-3" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <h5 class="mb-1">{{ results.filename }}</h5>
+                                <div class="d-flex align-items-center text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    <span>Duration: {{ results.duration }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-md-end">
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <i class="fas fa-quote-left text-info"></i>
+                                    <div class="stat-value">{{ results.transcript|length }}</div>
+                                    <div class="stat-label">Characters</div>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-tags text-warning"></i>
+                                    <div class="stat-value">{{ results.entities|length if results.entities else 0 }}</div>
+                                    <div class="stat-label">Entities</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-12">
-        <div class="card mb-4">
+    <!-- Transcription Card -->
+    <div class="col-12 mb-4">
+        <div class="card reveal">
             <div class="card-header">
-                <h3>Transcription</h3>
+                <h3 class="card-title">
+                    <i class="fas fa-microphone-alt"></i>
+                    Transcription Results
+                </h3>
+                <p class="mb-0 mt-2 text-muted">Original and cleaned versions of your audio transcription</p>
             </div>
             <div class="card-body">
-                <div class="mb-3">
-                    <h4>Original Transcript</h4>
-                    <div class="p-3 bg-light rounded">
-                        {{ results.transcript }}
+                <div class="row">
+                    <div class="col-lg-6 mb-4">
+                        <div class="transcript-section">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="transcript-icon me-3">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <h4 class="mb-0">Original Transcript</h4>
+                            </div>
+                            <div class="transcript-content original">
+                                {{ results.transcript }}
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="mb-3">
-                    <h4>Cleaned Text</h4>
-                    <div class="p-3 bg-light rounded">
-                        {{ results.cleaned_text }}
+                    <div class="col-lg-6 mb-4">
+                        <div class="transcript-section">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="transcript-icon me-3">
+                                    <i class="fas fa-broom"></i>
+                                </div>
+                                <h4 class="mb-0">Cleaned Text</h4>
+                            </div>
+                            <div class="transcript-content cleaned">
+                                {{ results.cleaned_text }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-12">
-        <div class="card mb-4">
+    <!-- Named Entities Card -->
+    <div class="col-12 mb-4">
+        <div class="card reveal">
             <div class="card-header">
-                <h3>Named Entities</h3>
+                <h3 class="card-title">
+                    <i class="fas fa-tags"></i>
+                    Named Entities
+                </h3>
+                <p class="mb-0 mt-2 text-muted">Key entities identified in your audio content</p>
             </div>
             <div class="card-body">
                 {% if results.entities %}
-                    <div class="p-3">
-                        {% for entity, label in results.entities %}
-                            <span class="entity-tag {{ label }}" title="{{ label }}">
-                                {{ entity }} <small>({{ label }})</small>
-                            </span>
-                        {% endfor %}
+                    <div class="entities-container">
+                        <div class="entities-legend mb-4">
+                            <div class="row">
+                                <div class="col-md-3 col-6 mb-2">
+                                    <div class="legend-item">
+                                        <span class="legend-color PERSON"></span>
+                                        <span class="legend-label">
+                                            <i class="fas fa-user me-1"></i>
+                                            Person
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6 mb-2">
+                                    <div class="legend-item">
+                                        <span class="legend-color ORG"></span>
+                                        <span class="legend-label">
+                                            <i class="fas fa-building me-1"></i>
+                                            Organization
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6 mb-2">
+                                    <div class="legend-item">
+                                        <span class="legend-color GPE"></span>
+                                        <span class="legend-label">
+                                            <i class="fas fa-map-marker-alt me-1"></i>
+                                            Location
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6 mb-2">
+                                    <div class="legend-item">
+                                        <span class="legend-color DATE"></span>
+                                        <span class="legend-label">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            Date/Time
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="entities-tags">
+                            {% for entity, label in results.entities %}
+                                <span class="entity-tag {{ label }}" title="{{ label }}">
+                                    {{ entity }}
+                                    <small class="entity-type">({{ label }})</small>
+                                </span>
+                            {% endfor %}
+                        </div>
                     </div>
                 {% else %}
-                    <p>No entities detected in the transcript.</p>
+                    <div class="no-entities">
+                        <div class="text-center py-5">
+                            <i class="fas fa-search text-muted mb-3" style="font-size: 3rem; opacity: 0.3;"></i>
+                            <h5 class="text-muted">No entities detected</h5>
+                            <p class="text-muted">The transcript doesn't contain identifiable named entities.</p>
+                        </div>
+                    </div>
                 {% endif %}
             </div>
         </div>
     </div>
 
-    <div class="col-12">
-        <div class="card mb-4">
+    <!-- Summaries Card -->
+    <div class="col-12 mb-4">
+        <div class="card reveal">
             <div class="card-header">
-                <h3>Summaries</h3>
+                <h3 class="card-title">
+                    <i class="fas fa-compress-alt"></i>
+                    AI-Generated Summaries
+                </h3>
+                <p class="mb-0 mt-2 text-muted">Different levels of summarization for your content</p>
             </div>
             <div class="card-body">
                 <div class="accordion" id="summaryAccordion">
                     <div class="accordion-item">
                         <h2 class="accordion-header">
                             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTiny" aria-expanded="true">
-                                One-Sentence Summary
+                                <div class="summary-header">
+                                    <i class="fas fa-bolt text-warning me-2"></i>
+                                    <div>
+                                        <strong>One-Sentence Summary</strong>
+                                        <small class="d-block text-muted">Quick overview in a single sentence</small>
+                                    </div>
+                                </div>
                             </button>
                         </h2>
                         <div id="collapseTiny" class="accordion-collapse collapse show" data-bs-parent="#summaryAccordion">
                             <div class="accordion-body">
-                                {{ results.tiny_summary }}
+                                <div class="summary-content">
+                                    <i class="fas fa-quote-left text-muted me-2"></i>
+                                    {{ results.tiny_summary }}
+                                    <i class="fas fa-quote-right text-muted ms-2"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -84,12 +209,20 @@
                     <div class="accordion-item">
                         <h2 class="accordion-header">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseShort">
-                                Paragraph Summary
+                                <div class="summary-header">
+                                    <i class="fas fa-paragraph text-info me-2"></i>
+                                    <div>
+                                        <strong>Paragraph Summary</strong>
+                                        <small class="d-block text-muted">Concise paragraph with key points</small>
+                                    </div>
+                                </div>
                             </button>
                         </h2>
                         <div id="collapseShort" class="accordion-collapse collapse" data-bs-parent="#summaryAccordion">
                             <div class="accordion-body">
-                                {{ results.short_summary }}
+                                <div class="summary-content">
+                                    {{ results.short_summary }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -97,12 +230,20 @@
                     <div class="accordion-item">
                         <h2 class="accordion-header">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLong">
-                                Detailed Summary
+                                <div class="summary-header">
+                                    <i class="fas fa-list-ul text-success me-2"></i>
+                                    <div>
+                                        <strong>Detailed Summary</strong>
+                                        <small class="d-block text-muted">Comprehensive breakdown with details</small>
+                                    </div>
+                                </div>
                             </button>
                         </h2>
                         <div id="collapseLong" class="accordion-collapse collapse" data-bs-parent="#summaryAccordion">
                             <div class="accordion-body">
-                                {{ results.long_summary | nl2br }}
+                                <div class="summary-content detailed">
+                                    {{ results.long_summary | nl2br }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -111,4 +252,195 @@
         </div>
     </div>
 </div>
+
+<style>
+.stats-grid {
+    display: flex;
+    gap: 2rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    border-radius: 12px;
+    min-width: 80px;
+}
+
+.stat-item i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.transcript-section {
+    height: 100%;
+}
+
+.transcript-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    color: #667eea;
+}
+
+.transcript-content {
+    background: linear-gradient(135deg, rgba(248, 249, 250, 0.8) 0%, rgba(233, 236, 239, 0.8) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    padding: 1.5rem;
+    min-height: 200px;
+    position: relative;
+    backdrop-filter: blur(10px);
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.transcript-content.original::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px 0 0 2px;
+}
+
+.transcript-content.cleaned::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border-radius: 2px 0 0 2px;
+}
+
+.entities-legend {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.legend-color.PERSON { background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); }
+.legend-color.ORG { background: linear-gradient(135deg, #cce5ff 0%, #b3d9ff 100%); }
+.legend-color.GPE { background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); }
+.legend-color.DATE { background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); }
+
+.legend-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.entities-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.entity-type {
+    opacity: 0.8;
+    font-size: 0.75rem;
+}
+
+.no-entities {
+    background: linear-gradient(135deg, rgba(248, 249, 250, 0.5) 0%, rgba(233, 236, 239, 0.5) 100%);
+    border-radius: 16px;
+}
+
+.summary-header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.summary-content {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+}
+
+.summary-content.detailed {
+    white-space: pre-line;
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        gap: 1rem;
+    }
+    
+    .stat-item {
+        min-width: 60px;
+        padding: 0.75rem;
+    }
+    
+    .stat-value {
+        font-size: 1.25rem;
+    }
+    
+    .transcript-content {
+        min-height: 150px;
+        padding: 1rem;
+    }
+    
+    .entities-legend {
+        padding: 1rem;
+    }
+}
+
+/* Animation for entity tags */
+.entity-tag {
+    animation: slideInUp 0.3s ease forwards;
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+@keyframes slideInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.entity-tag:nth-child(1) { animation-delay: 0.1s; }
+.entity-tag:nth-child(2) { animation-delay: 0.15s; }
+.entity-tag:nth-child(3) { animation-delay: 0.2s; }
+.entity-tag:nth-child(4) { animation-delay: 0.25s; }
+.entity-tag:nth-child(5) { animation-delay: 0.3s; }
+.entity-tag:nth-child(n+6) { animation-delay: 0.35s; }
+</style>
 {% endblock %}
